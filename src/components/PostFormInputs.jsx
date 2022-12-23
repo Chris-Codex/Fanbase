@@ -1,33 +1,46 @@
 import React, { useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import { toast } from 'react-toastify'
 import { categories } from '../assets/data'
 import { toggleLoading } from '../features/loadingSlice/loadingSlice'
 import { addPost } from '../features/postSlice/postSlice'
 import Loading from './Loading'
+import { toast } from 'react-toastify';
+import uuid from 'react-uuid'
+import { current } from '@reduxjs/toolkit'
 
 
+
+
+const uid = uuid()
+const gen_id = uid.slice(0, 8)
+
+console.log("New", gen_id)
 
 const PostFormInputs = () => {
-    const isLoading = useSelector((state) => state.loading)
     const dispatch = useDispatch()
+    const isLoading = useSelector((state) => state.loading)
+    const currentUser = useSelector((state) => state.auth.loggedInUser)
+    const currentUserID = currentUser.id
+    const currentUsername = currentUser.email
+
     const [title, setTitle] = useState("")
-    const [email, setEmail] = useState("")
     const [image, setImage] = useState("")
     const [category, setCategory] = useState("")
     const [description, setDescription] = useState("")
-  
+
+    const myDate = new  Date()
+    const newDate = myDate.toDateString()
+   
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        if(title && email && image &&  category && description){
+        if(title && image &&  category && description){
             try {
                 dispatch(toggleLoading())
                 setTimeout(() => {  
-                    dispatch(addPost({id: new Date().getTime().toString(), title, email, image, category, description}))
+                    dispatch(addPost({id: currentUserID, title, image, author: currentUsername, category, description, times: newDate}))
                     setTitle("")
-                    setEmail("")
                     setImage("")
                     setCategory("")
                     setDescription("")
@@ -53,13 +66,6 @@ const PostFormInputs = () => {
                             <Form.Group className="mb-3" controlId="formBasicEmail">
                                 <Form.Label>Title</Form.Label>
                                 <Form.Control type="text" name="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter Title" />
-                            </Form.Group>
-                        </div>
-
-                        <div className='col-md-6'>
-                            <Form.Group className="mb-3" controlId="formBasicEmail">
-                                <Form.Label>Email address</Form.Label>
-                                <Form.Control type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter email" />
                             </Form.Group>
                         </div>
                     </div>

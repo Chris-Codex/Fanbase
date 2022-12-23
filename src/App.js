@@ -5,6 +5,8 @@ import EditPost from './pages/EditPost';
 import SinglePost from './components/SinglePost';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 function App() {
   return (
@@ -12,7 +14,9 @@ function App() {
      <BrowserRouter>
      <ToastContainer />
       <Routes>
-        <Route path="/" element={ <Home />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/Home" element={ <Home />} />
         <Route path="/create-post" element={<CreatePost />} />
         <Route path="/edit-post/:id" element={<EditPost />} />
         <Route path="/single-post/:id" element={<SinglePost />} />

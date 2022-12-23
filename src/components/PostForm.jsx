@@ -26,7 +26,7 @@ const PostForm = () => {
 
             <div className='flex flex-row gap-2 mt-2'>
               <MdPreview size={18} className='mt-1' />
-              <Link to={`/`}><p>View Post</p></Link> 
+              <Link to={`/Home`}><p>View Post</p></Link> 
             </div>
 
             <div className='flex flex-row gap-2 mt-2'>

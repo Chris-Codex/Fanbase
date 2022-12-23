@@ -1,20 +1,23 @@
 import React, { useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { categories } from '../assets/data';
 import { toggleLoading } from '../features/loadingSlice/loadingSlice';
+import { editPost } from '../features/postSlice/postSlice';
 import Loading from './Loading';
+
 
 
 
 const EditPostInputs = () => {
     const {id} = useParams()
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
     const usersPost = useSelector((state) => state.post.postData)
     const foundUser = usersPost.find((userPost) => userPost.id === id)
-    console.log("[]***", foundUser)
     const isLoading = useSelector((state) => state.loading)
-    const dispatch = useDispatch()
+   
 
     const [title, setTitle] = useState(foundUser.title)
     const [email, setEmail] = useState(foundUser.email)
@@ -24,6 +27,26 @@ const EditPostInputs = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
+
+        try{
+            dispatch(toggleLoading())
+            setTimeout(() => {
+                dispatch(editPost({
+                    id: id,
+                    title: title,
+                    email: email,
+                    image: image,
+                    category: category,
+                    description: description
+                }))
+                dispatch(toggleLoading())
+                navigate("/")
+            }, 500)
+            
+        }catch(error){
+            dispatch(toggleLoading())
+            throw new Error(error.message)
+        }
 
     }
 

@@ -1,22 +1,48 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    postData: JSON.parse(sessionStorage.getItem("posted")) || []
-}
+  postData: JSON.parse(localStorage.getItem("posted")) || [],
+};
 
-const postSlice = createSlice ({
-    name: "post",
-    initialState,
+const postSlice = createSlice({
+  name: "post",
+  initialState,
 
-    reducers: {
-        addPost: (state, action) => {
-            console.log("Action dispatched", action)
-            const saveState = JSON.stringify([...state.postData, action.payload])
-            sessionStorage.setItem("posted", saveState)
-            state.postData = [...state.postData, action.payload]
-        }
-    }
-})
+  reducers: {
+    addPost: (state, action) => {
+      const saveState = JSON.stringify([...state.postData, action.payload]);
+      localStorage.setItem("posted", saveState);
+      state.postData = [...state.postData, action.payload];
+    },
 
-export default postSlice.reducer
-export const { addPost } = postSlice.actions
+    editPost: (state, action) => {
+      console.log("Action Edited dispatched", action);
+      const { id, title, email, image, category, description } = action.payload;
+      const existingPost = state.postData.find(
+        (postlist) => postlist.id === id
+      );
+      if (existingPost) {
+        existingPost.title = title;
+        existingPost.email = email;
+        existingPost.image = image;
+        existingPost.category = category;
+        existingPost.description = description;
+      }
+
+      const saveState = JSON.stringify([...state.postData]);
+      localStorage.setItem("posted", saveState);
+    },
+
+    deletePost: (state, action) => {
+      const deleteUser = state.postData.filter(
+        (userpost) => userpost.id !== action.payload.id
+      );
+      state.postData = [...deleteUser];
+      const saveState = JSON.stringify(deleteUser);
+      localStorage.setItem("posted", saveState);
+    },
+  },
+});
+
+export default postSlice.reducer;
+export const { addPost, editPost, deletePost } = postSlice.actions;

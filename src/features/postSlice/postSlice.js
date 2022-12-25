@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   postData: JSON.parse(localStorage.getItem("posted")) || [],
+  filteredPost: JSON.parse(localStorage.getItem("filterpost")) || [],
 };
 
 const postSlice = createSlice({
@@ -41,8 +42,18 @@ const postSlice = createSlice({
       const saveState = JSON.stringify(deleteUser);
       localStorage.setItem("posted", saveState);
     },
+
+    filterCategories: (state, action) => {
+      const filterCatgory = state.postData.filter(
+        (cat) => cat.category === action.payload
+      );
+      state.filteredPost = [...filterCatgory];
+      const saveState = JSON.stringify([...filterCatgory]);
+      localStorage.setItem("filterpost", saveState);
+    },
   },
 });
 
 export default postSlice.reducer;
-export const { addPost, editPost, deletePost } = postSlice.actions;
+export const { addPost, editPost, deletePost, filterCategories } =
+  postSlice.actions;

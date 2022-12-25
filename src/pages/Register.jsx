@@ -30,7 +30,7 @@ const Register = () => {
             try{
                 dispatch(toggleLoading())
                 setTimeout(() => {
-                    dispatch(registerUser({id: gen_id, fullname: fullname, email: email, password: password}))
+                    dispatch(registerUser({id: new Date().getTime().toString(), fullname: fullname, email: email, password: password}))
                     toast.success("Registration was Successful")
                     dispatch(toggleLoading())
                     navigate("/")

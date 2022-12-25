@@ -5,11 +5,15 @@ import { Button } from '@material-tailwind/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { loginUser } from '../features/authSlice/authSlice';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toggleLoading } from '../features/loadingSlice/loadingSlice';
+import Loading from '../components/Loading';
+
 
 
 const Login = () => {
     const users = useSelector((state) => state.auth.users)
+    const loading = useSelector((state) => state.loading)
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const [email, setEmail] = useState("")
@@ -21,19 +25,25 @@ const Login = () => {
 
         if (email && password !==""){
             users.map((user)=>{
-                try{
-                    if(user.email === email && user.password === password){
-                        dispatch(loginUser({id: user.id, email, username: user.fullname, password}))
-                        navigate("/Home")
-                        toast.success("Login was successful")
-                    }else if(user.email !== email && user.password !== password){
-                        toast.error("Email or Password doesn't exist")
-                    }else{
-                        toast.error("All fields are required")
+
+                if (user.email === email & user.password === password) {
+                    try {
+                        dispatch(toggleLoading())
+                        setTimeout(() => {
+                            dispatch(loginUser({id: user.id, email, username: user.fullname, password}))
+                            toast.success("Login was successful")
+                            navigate("/Home")
+                            dispatch(toggleLoading())
+                        }, 500)
+                    } catch(error) {
+                        dispatch(toggleLoading())
+                        throw new Error(error.message)
                     }
-                }catch(error){
-                    throw new Error(error.message)
-                }
+                } else if(user.email !== email && user.password !== password) {
+                     toast.error("Email or Password doesn't exist")
+                } else {
+                    toast.error("All fields are required")
+                }   
             })
         }
 
@@ -47,7 +57,8 @@ const Login = () => {
                     <h3 className='text-center mt-10 text-3xl font-bold tracking-normal leading-none'>LOGIN PAGE</h3>
                 </div>
                 
-                <div style={{marginTop: "-30px"}}>
+                {loading ? <Loading /> : (
+                    <div style={{marginTop: "-30px"}}>
                     <Form className='grid place-items-center py-[80px]'>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Email address</Form.Label>
@@ -60,7 +71,9 @@ const Login = () => {
                         </Form.Group> 
                         <Button className='bg-black w-[100px] h-[62px]' onClick={handleSubmit}>Login</Button>
                     </Form>
+                    <p style={{marginTop: -70}} className="ml-[95px]">Are you a user? <Link to="/register"><span>Register</span></Link></p>
                 </div>
+                )}
             </div>
         </div>
     </div>
